@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import {useState} from 'react'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface Tasks {
+    text: string,
+    id: string,
 }
 
-export default App
+const App = () => {
+    const [tasks, setTasks] = useState<Tasks[]>([
+        {text: 'Выполнить ДЗ', id: '1'},
+        {text: 'Украсить ёлку', id: '2'},
+        {text: 'Сходить в спортзал', id: '3'},
+    ]);
+
+    const [newTaskText, setNewTaskText] = useState<string>('');
+
+    const handleAddTask = () => {
+        const newTask = {id: new Date().getTime().toString(), text: newTaskText};
+        setTasks([...tasks, newTask]);
+        setNewTaskText('');
+    };
+
+    const handleDeleteTask = (taskId: string) => {
+        setTasks(tasks.filter(task => task.id !== taskId));
+    };
+
+    return (
+        <div className="main-block">
+            <h2>ToDo List</h2>
+            <div className="input-block">
+                <input
+                    className="input-text"
+                    type="text"
+                    value={newTaskText}
+                    onChange={(e) => setNewTaskText(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handleAddTask();
+                        }
+                    }}
+                />
+                <button type="button" onClick={handleAddTask}>Add</button>
+            </div>
+            {tasks.map((task) => (
+                <div className="task-text" key={task.id}>
+                    <span>{task.text}</span>
+                    <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+export default App;
